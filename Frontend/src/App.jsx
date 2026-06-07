@@ -2,6 +2,7 @@ import './App.css'
 import PageSignIn from "./pages/PageSignIn/PageSignIn"
 import Home from "./pages/Home/Home"
 import React, { useState, useEffect  } from 'react';
+import PageUsuario from "./pages/Usuario/PageUsuario"
 import { HashRouter as Router, Routes, Route } from 'react-router-dom'
 import { supabase } from './config/supabase';
 
@@ -27,6 +28,7 @@ function App() {
       <Routes>
         <Route path='/' element={<PageSignIn session={session}/>}/>
         <Route path='/home' element={<Home session={session}/>}/>
+        <Route path='/usuario' element={<PageUsuario session={session}/>}/>
       </Routes>
     </Router>
   );

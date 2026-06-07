@@ -4,14 +4,19 @@ import { Link, Navigate, useNavigate } from 'react-router-dom';
 function Options() {
    const navigate = useNavigate();
 
-    const optClick = () => {
+    const optClickUser = () => {
         navigate("/usuario")
     }
 
+    const optClickCategoria = () => {
+        navigate("/categoria")
+    }
+
+
     return (
         <div className='Options'>
-            <button onClick={optClick}>Usuários</button>
-            <button>Categorias</button>
+            <button onClick={optClickUser}>Usuários</button>
+            <button onClick={optClickCategoria}>Categorias</button>
         </div>
   )
 }

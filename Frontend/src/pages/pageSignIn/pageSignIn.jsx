@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import './App.css'
-import SignIn from './components/SignIn/SignIn';
+import './PageSignIn.css'
+import SignIn from '../../components/SignIn/SignIn';
 
-function pageSignIn() {
-  const [session] = useState(null);
+
+function PageSignIn({session}) {
 
   return (
-    <div className="App">
+    <div className="PageSignIn">
         <SignIn session={session} />
     </div>
   );
 }
 
-export default pageSignIn
+export default PageSignIn

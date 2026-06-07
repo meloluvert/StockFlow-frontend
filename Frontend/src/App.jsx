@@ -1,14 +1,34 @@
-import React, { useState } from 'react';
 import './App.css'
-import SignIn from './components/SignIn/SignIn';
+import PageSignIn from "./pages/PageSignIn/PageSignIn"
+import Home from "./pages/Home/Home"
+import React, { useState, useEffect  } from 'react';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom'
+import { supabase } from './config/supabase';
 
 function App() {
-  const [session] = useState(null);
+  const [session, setSession] = useState(null);
+
+ useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   return (
-    <div className="App">
-        <SignIn session={session} />
-    </div>
+    <Router>
+      <Routes>
+        <Route path='/' element={<PageSignIn session={session}/>}/>
+        <Route path='/home' element={<Home session={session}/>}/>
+      </Routes>
+    </Router>
   );
 }
 

@@ -1,0 +1,8 @@
+.Navbar{
+    width: 100%;
+    display: inline-block;
+    background-color: white;
+    padding: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+

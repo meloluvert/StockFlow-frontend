@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './App.css'
 import SignIn from './components/SignIn/SignIn';
 
-function App() {
+function pageSignIn() {
   const [session] = useState(null);
 
   return (
@@ -12,4 +12,4 @@ function App() {
   );
 }
 
-export default App
+export default pageSignIn

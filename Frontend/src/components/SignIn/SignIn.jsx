@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { supabase } from '../config/supabase.js';
+import { supabase } from '../../config/supabase.js';
 import "./SignIn.css";
 
 
-const SignIn = () => {
+function SignIn({session}) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [statusText, setStatusText] = useState('');
@@ -14,7 +14,7 @@ const SignIn = () => {
 
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
-      console.log("erro no login")
+      alert("Senha e/ou endereço de email errado(s)");
       return;
     }
 

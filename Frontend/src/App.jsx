@@ -1,6 +1,6 @@
 import './App.css'
-import PageSignIn from "./pages/PageSignIn/PageSignIn"
-import Home from "./pages/Home/Home"
+import PageSignIn from "./pages/pageSignIn/pageSignIn.jsx"
+import Home from "./pages/Home/home"
 import React, { useState, useEffect  } from 'react';
 import PageUsuario from "./pages/PageUsuario/PageUsuario"
 import PageCategoria from './pages/PageCategoria/PageCategoria';

@@ -1,0 +1,29 @@
+.modal-usuario, .overlay{
+    width: 100vw;
+    height: 100vw;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: fixed;
+}
+
+.overlay{
+    background: rgba(49, 49, 49, 0.8);
+}
+
+.modal-usuario-conteudo {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    background-color: white;
+    padding: 14px 28px;
+    border-radius: 3px;
+    max-width: 600px;
+    min-width: 300px;
+}
+
+body.active-modal {
+    overflow-y: hidden;
+}
+

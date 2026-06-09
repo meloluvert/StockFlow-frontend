@@ -20,20 +20,20 @@ function AdicionarUsuarios({ showModal, setShowModal }){
         <div className="modal-usuario">
             <div className="overlay"></div>
             <div className="modal-usuario-conteudo">
-                <h3>Adicionar Usuários</h3>
+                <h1>Adicionar Usuários</h1>
                 <form>
 
                 <label>Email:</label>
-                    <input type="email"/>
+                    <input type="email" placeholder="email@exemplo.com"/>
                 
                 <label>Senha:</label>
-                    <input type="password"/>
+                    <input type="password" placeholder='senha'/>
                 
                 <label>Nome completo:</label>
-                    <input type="text"/>
+                    <input type="text" placeholder='nome completo'/>
             
                 <label>CPF:</label>
-                    <input type="text"/>
+                    <input type="text" placeholder='CPF'/>
             
                 <label>Cargo:</label>
                     <select>

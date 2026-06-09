@@ -37,7 +37,7 @@ function SignIn({session}) {
                     <label>Senha</label>
                     <input type='password' placeholder='senha' onChange={(e) => setPassword(e.target.value)}/>
                 </div>
-                <button type='button' onClick={handleSignIn}>Entrar</button>
+                <button className='btn-entrar' type='button' onClick={handleSignIn}>Entrar</button>
             </form>
         </div>
     </div>

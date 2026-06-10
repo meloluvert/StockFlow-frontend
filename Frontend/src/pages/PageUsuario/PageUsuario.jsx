@@ -1,34 +1,29 @@
 import React, { useState } from 'react'
 import ListaUsuarios from '../../components/Usuarios/ListaUsuarios/ListaUsuarios'
 import AdicionarUsuarios from '../../components/Usuarios/AdicionarUsuarios/AdicionarUsuarios'
+import Navbar from '../../components/Navbar/Navbar'
 import './PageUsuario.css'
 
 function PageUsuario({session}) {
   const [showModal, setShowModal] = useState(false)
-  //const gerente = session.user.options.data.cargo === 0;
+  const gerente = session.user.user_metadata.cargo === "gerente";
 
   return (
-    <div>
-      {/*
-      {gerente && (
-        <div className='funcoes-gerente'>
-          <button onClick={() => setShowModal(true)}></button>
-          <AdicionarUsuarios 
-            showModal={showModal} 
-            setShowModal={setShowModal} 
-          />
-        </div>
-      )}*/}
+    <div className='PageUsuario'>
+      <Navbar session={session}/>
+      <div className='PageUsuario-content'>
 
-        <div className='funcoes-gerente'>
-        <button onClick={() => setShowModal(true)}>Adicionar Usuarios</button>
-        <AdicionarUsuarios 
-          showModal={showModal} 
-          setShowModal={setShowModal} 
-        />
-
+        {gerente && (
+          <div className='funcoes-gerente'>
+            <button onClick={() => setShowModal(true)}>Adicionar Usuarios</button>
+            <AdicionarUsuarios 
+              showModal={showModal} 
+              setShowModal={setShowModal} 
+            />
+          </div>
+        )}
+        <ListaUsuarios session={session} />
       </div>
-      <ListaUsuarios session={session} />
     </div>
   )
 }

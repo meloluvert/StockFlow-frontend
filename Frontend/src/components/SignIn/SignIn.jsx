@@ -7,18 +7,20 @@ import "./SignIn.css";
 function SignIn({session}) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [statusText, setStatusText] = useState('');
     const navigate = useNavigate();
 
     const handleSignIn = async (e) => {
     e.preventDefault();
-    setStatusText('Efetuando login...');
 
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
+        
       alert("Senha e/ou endereço de email errado(s)");
+
     } else {
+
         navigate("/home");
+
     }
 
   };

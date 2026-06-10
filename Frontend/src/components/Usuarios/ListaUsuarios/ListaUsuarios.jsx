@@ -9,7 +9,7 @@ function ListaUsuarios({session}) {
   const [showModal, setShowModal] = useState(false);
   const [selectedUsuario, setSelectedUsuario] = useState(null);
 
-   const isGerente = session.user.user_metadata.cargo === "gerente";
+  const isGerente = session.user.user_metadata.cargo === "gerente";
 
   const handleRowClick = (usuario) => {
     if (!isGerente){

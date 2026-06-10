@@ -1,0 +1,104 @@
+.modal-editar-categoria, .overlay{
+    width: 100vw;
+    height: 100vw;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: fixed;
+}
+
+.overlay{
+    background: rgba(49, 49, 49, 0.8);
+}
+
+.modal-editar-categoria-conteudo {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 40px;
+    border-radius: 1rem;
+    max-width: 600px;
+    min-width: 500px;
+}
+
+.modal-editar-categoria-conteudo h1 {
+    text-align: center;
+    font-size: 30px;
+}
+
+.modal-editar-categoria-conteudo label {
+    display: block;
+    padding-bottom: 0.25rem;    
+}
+
+.modal-editar-categoria-conteudo input {
+    width: 100%;
+    height: 100%;
+    outline: none;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+    border: 0.05rem solid #E5EDE4;
+    padding-left: 20px;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.modal-editar-categoria-conteudo select {
+    width: 100%;
+    height: 100%;
+    outline: none;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+    border: 0.05rem solid #E5EDE4;
+    padding-left: 20px;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    margin-top: 1rem;
+    background-color: white;
+    margin-bottom: 1rem;
+}
+
+body.active-modal {
+    overflow-y: hidden;
+}
+
+.modal-editar-categoria-conteudo .btn-cancelar{
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    outline: none;
+    border: none;
+    border-radius: 0.5rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    margin-top: 1.5rem;
+    background-color: grey;
+}
+
+.modal-editar-categoria-conteudo .btn-cancelar:hover{
+    background-color: rgb(202, 202, 202);
+    transition: 0.7s;
+}
+
+.modal-editar-categoria-conteudo .btn-adicionar-edicao{
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    outline: none;
+    border: none;
+    border-radius: 0.5rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    margin-top: 1.5rem;
+    background-color: #2C8224;
+}
+
+.modal-editar-categoria-conteudo .btn-adicionar:hover{
+    background-color: #58ad50;
+    transition: 0.7s;
+}

@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../../config/supabase';
+import EditarUsuarios from '../EditarUsuarios/EditarUsuarios.jsx'
 import './ListaUsuarios.css'
 
 function ListaUsuarios({session}) {
   const [usuarios, setUsuarios] = useState([]);
   const [search, setSearch] = useState('')
+  const [showModal, setShowModal] = useState(false);
+  const [selectedUsuario, setSelectedUsuario] = useState(null);
 
    const isGerente = session.user.user_metadata.cargo === "gerente";
 
@@ -13,7 +16,8 @@ function ListaUsuarios({session}) {
       return
     }
 
-    alert("Row click")
+    setSelectedUsuario(usuario)
+    setShowModal(true)
   }
 
   const fetchUsuarios = async () => {
@@ -54,7 +58,7 @@ function ListaUsuarios({session}) {
               ((usuario) => {
                 return (
                   <tr 
-                    key={usuario.id} onClick={() => handleRowClick(usuario)}
+                    key={usuario.id} onClick={(e) => handleRowClick(usuario)}
                     className={isGerente ? "clickable-row" : ""}
                   >
                     <td>{usuario.nome}</td>
@@ -67,6 +71,10 @@ function ListaUsuarios({session}) {
             }
             </tbody>
           </table>
+          <EditarUsuarios
+              showModal={showModal} 
+              setShowModal={setShowModal}
+              usuario={selectedUsuario}/>
       </div> 
     </div>
   );

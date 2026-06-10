@@ -1,12 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../../config/supabase';
+import './ListaUsuarios.css'
 
 function ListaUsuarios({session}) {
   const [usuarios, setUsuarios] = useState([]);
   const [search, setSearch] = useState('')
 
-  const handleRowClick = () => {
-    alert("row clicada")
+   const isGerente = session.user.user_metadata.cargo === "gerente";
+
+  const handleRowClick = (usuario) => {
+    if (!isGerente){
+      return
+    }
+
+    alert("Row click")
   }
 
   const fetchUsuarios = async () => {
@@ -21,13 +28,12 @@ function ListaUsuarios({session}) {
 
   return (
     <div>
-        <div >
-        <h3>Listagem de Usuários</h3>
+        <div className='listagem-usuario'>
+        <h1>Listagem de Usuários</h1>
 
-        <button type="button" onClick={fetchUsuarios}>Carregar usuários</button>
+        <button className="btn-adicionar" type="button" onClick={fetchUsuarios}>Carregar usuários</button>
           
-          <label className='form-search'>Buscar</label>
-          <input className='input-search' type={Text} value={search} onChange={(e) => setSearch(e.target.value)}/>
+          <input className='input-search' placeholder='Buscar' type={Text} value={search} onChange={(e) => setSearch(e.target.value)}/>
          
           <table>
             <thead>
@@ -42,12 +48,15 @@ function ListaUsuarios({session}) {
               {usuarios.filter((usuario) => {
                 return search === '' ? usuario :
                 usuario.cpf.toString().includes(search) ||
-                usuario.cargo.toLowerCase().includes(search)
-
+                usuario.cargo.toLowerCase().includes(search) ||
+                usuario.status.toLowerCase().includes(search)
               }).map
               ((usuario) => {
                 return (
-                  <tr key={usuario.id} onClick={handleRowClick}>
+                  <tr 
+                    key={usuario.id} onClick={() => handleRowClick(usuario)}
+                    className={isGerente ? "clickable-row" : ""}
+                  >
                     <td>{usuario.nome}</td>
                     <td>{usuario.cpf}</td>
                     <td>{usuario.cargo}</td>

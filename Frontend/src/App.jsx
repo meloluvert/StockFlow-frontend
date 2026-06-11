@@ -5,6 +5,7 @@ import Home from "./pages/Home/Home.jsx"
 import PageUsuario from "./pages/PageUsuario/PageUsuario.jsx"
 import PageCategoria from './pages/PageCategoria/PageCategoria.jsx';
 import PageFornecedor from './pages/PageFornecedor/PageFornecedor.jsx';
+import PageLocalizacao from './pages/PageLocalizacao/PageLocalizacao.jsx';
 
 import { HashRouter as Router, Routes, Route } from 'react-router-dom'
 import { supabase } from './config/supabase';
@@ -36,6 +37,7 @@ function App() {
         <Route path='/usuario' element={<PageUsuario session={session}/>}/>
         <Route path='/categoria' element={<PageCategoria session={session}/>}/>
         <Route path='/fornecedor' element={<PageFornecedor session={session}/>}></Route>
+        <Route path='/localizacao' element={<PageLocalizacao session={session}/>}></Route>
         
       </Routes>
     </Router>

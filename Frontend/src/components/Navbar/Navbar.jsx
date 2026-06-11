@@ -1,7 +1,7 @@
 import React from 'react'
 import './Navbar.css'
 
-function navbar({session}) {
+function Navbar({session}) {
   return (
     <div className='Navbar'>
         <h1 className='logoMenu'>Stock<span>Flow</span></h1>
@@ -10,4 +10,4 @@ function navbar({session}) {
   )
 }
 
-export default navbar
+export default Navbar

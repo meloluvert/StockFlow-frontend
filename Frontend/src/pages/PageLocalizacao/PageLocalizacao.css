@@ -1,0 +1,12 @@
+.PageLocalizacao {
+    background-color: #E5EDE4;
+}
+
+.PageLocalizacao-content {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+

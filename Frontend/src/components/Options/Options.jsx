@@ -12,11 +12,18 @@ function Options() {
         navigate("/categoria")
     }
 
+    const optClickFornecedores = () => {
+        navigate("/fornecedor")
+    }
+
 
     return (
         <div className='Options'>
+
             <button onClick={optClickUser}>Usuários</button>
             <button onClick={optClickCategoria}>Categorias</button>
+            <button onClick={optClickFornecedores}>Fornecedores</button>
+
         </div>
   )
 }

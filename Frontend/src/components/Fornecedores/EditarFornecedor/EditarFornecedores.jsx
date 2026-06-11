@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react'
-import './EditarCategorias.css'
-import { supabase } from '../../../config/supabase';
+import { supabase } from '../../../config/supabase'
 
-function EditarCategorias({ showModal, setShowModal, item }){
+import './EditarFornecedores.css'
+
+function EditarFornecedor({ showModal, setShowModal, item }) {
     const [editingItemId, setEditingItemId] = useState(null);
+    const [editNome, setEditNome] = useState ('')
     const [editDescricao, setEditDescricao] = useState('')
     const [editStatus, setEditStatus] = useState('ativo');
 
     useEffect(() => {
         if (item) {
             setEditingItemId(item.id);
+            setEditNome(item.nome || '');
             setEditDescricao(item.descricao || '');
             setEditStatus(item.status || 'ativo');
         }
@@ -19,8 +22,8 @@ function EditarCategorias({ showModal, setShowModal, item }){
         e.preventDefault();
 
         const { data, error } = await supabase
-            .from('categorias_produtos')
-            .update({ descricao: editDescricao, status: editStatus })
+            .from('fornecedores')
+            .update({nome: editNome, descricao: editDescricao, status: editStatus })
             .eq('id', editingItemId)
             .select()
             .single();
@@ -29,7 +32,6 @@ function EditarCategorias({ showModal, setShowModal, item }){
             console.log(error)
         setEditingItemId(null);
     };
-
 
     const toggleModal = () => {
         setShowModal(prev => !showModal)
@@ -45,11 +47,14 @@ function EditarCategorias({ showModal, setShowModal, item }){
   return (
     <>
     {showModal && (    
-        <div className="modal-editar-categoria">
+        <div className="modal-editar-fornecedor">
             <div className="overlay"></div>
-            <div className="modal-editar-categoria-conteudo">
-                <h1>Editar Categoria</h1>
+            <div className="modal-editar-fornecedor-conteudo">
+                <h1>Editar Fornecedor</h1>
                 <form>
+
+                <label>Nome:</label>
+                    <input type="text" placeholder='Nome' value={editNome} onChange={(e) => setEditNome(e.target.value)}/>
 
                 <label>Descrição:</label>
                     <input type="text" placeholder='Descrição' value={editDescricao} onChange={(e) => setEditDescricao(e.target.value)}/>
@@ -69,6 +74,7 @@ function EditarCategorias({ showModal, setShowModal, item }){
         </div>)}
     </>
   );
+
 }
 
-export default EditarCategorias
+export default EditarFornecedor

@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { supabase } from '../../../config/supabase';
-import EditarCategorias from '../EditarCategorias/EditarCategorias'
-import "./ListaCategorias.css"
+import React, { useState } from 'react'
+import { supabase } from '../../../config/supabase'
 
-function ListaCategorias({session}) {
+import EditarFornecedores from '../EditarFornecedor/EditarFornecedores';
+
+import './ListaFornecedores.css'
+
+function ListaFornecedores({session}) {
   const [items, setItems] = useState([]);
   const [search, setSearch] = useState('')
   const [showModal, setShowModal] = useState(false);
@@ -11,12 +13,12 @@ function ListaCategorias({session}) {
 
   const isGerente = session.user.user_metadata.cargo === "gerente";
 
-  const fetchCategorias = async () => {
+  const fetchFornecedores = async () => {
 
-    const { data, error } = await supabase.from('categorias_produtos').select('*');
+    const { data, error } = await supabase.from('fornecedores').select('*');
     setItems(data || []);
 
-  };
+  }
 
   const handleRowClick = (item) => {
     if (!isGerente){
@@ -28,12 +30,13 @@ function ListaCategorias({session}) {
   }
 
 
+
   return (
     <div>
-        <div className='listagem-categoria'>
-        <h1>Listagem de Categorias</h1>
+        <div className='listagem-fornecedores'>
+        <h1>Listagem de Fornecedores</h1>
 
-        <button className="btn-adicionar" type="button" onClick={fetchCategorias}>Carregar categorias</button>
+        <button className="btn-adicionar" type="button" onClick={fetchFornecedores}>Carregar categorias</button>
           
           <input className='input-search' placeholder='Buscar' type={Text} value={search} onChange={(e) => setSearch(e.target.value)}/>
          
@@ -41,6 +44,7 @@ function ListaCategorias({session}) {
             <thead>
                 <tr> 
                     <th>Nome</th>
+                    <th>CNPJ</th>
                     <th>Status</th>
                 </tr>
             </thead>
@@ -57,6 +61,7 @@ function ListaCategorias({session}) {
                     className={isGerente ? "clickable-row" : ""}
                   >
                     <td>{item.nome}</td>
+                    <td>{item.cnpj}</td>
                     <td>{item.status}</td>
                   </tr>
                 )
@@ -64,7 +69,7 @@ function ListaCategorias({session}) {
             }
             </tbody>
           </table>
-          <EditarCategorias
+          <EditarFornecedores
               showModal={showModal} 
               setShowModal={setShowModal}
               item={selectedItem}/>
@@ -73,4 +78,4 @@ function ListaCategorias({session}) {
   );
 }    
 
-export default ListaCategorias
+export default ListaFornecedores

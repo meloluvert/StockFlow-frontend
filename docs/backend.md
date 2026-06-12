@@ -11,6 +11,8 @@
   - [Campos esperados para signup](#campos-esperados-para-signup)
   - [Criar o primeiro funcionário (gerente)](#criar-o-primeiro-funcionário-gerente)
   - [Próximos funcionários (criados pelo gerente)](#próximos-funcionários-criados-pelo-gerente)
+- [Produtos (CRUD)](#produtos-crud)
+- [Movimentações (Registro e Histórico)](#movimentações-registro-e-histórico)
 - [Localizações (CRUD)](#localizações-crud)
   - [Campos e formatos do payload](#campos-e-formatos-do-payload-localizações)
   - [Inserir](#inserir-localizações)
@@ -39,7 +41,7 @@
 
 ## Visão geral
 
-- **Supabase Auth**: responsável por usuários (email/senha) e por anexar dados adicionais (ex.: `name`, `cpf`, `cargo`) durante o cadastro.
+- **Supabase Auth**: responsável por usuários (email/senha) e por anexar dados adicionais (ex.: `nome`, `cpf`, `cargo`) durante o cadastro.
 - **Supabase Database**: tabelas (ex.: `localizacoes`, `fornecedores`, `categorias_produtos`) recebem CRUD via `supabase.from('...')`.
 
 Este projeto assume que:
@@ -50,9 +52,9 @@ Este projeto assume que:
 
 ---
 
-## Supabase
+## Pré-requisitos no Supabase
 
-No Supabase, está a configuração dos itens abaixo:
+No Supabase, confirme (ou crie) os itens abaixo:
 
 1. **Projeto Supabase** (Database + Auth).
 2. Tabelas:
@@ -62,12 +64,11 @@ No Supabase, está a configuração dos itens abaixo:
 3. Tipos/constraints compatíveis com os valores que o frontend envia:
    - `tipo` (ex.: `localizacoes.tipo`) como **ENUM** (ou constraint)
    - `status` (ex.: `localizacoes.status` e `categorias_produtos.status`) como **ENUM** (ou constraint)
-4. **RLS (Row Level Security)** e **Policies** para controlar quem pode inserir/editar.
+4. (Recomendado) **RLS (Row Level Security)** e **Policies** para controlar quem pode inserir/editar.
 
 ---
 
 ## Configuração do projeto (supabase-js)
- Configuração baseada em [Vite + React](https://supabase.com/docs/guides/getting-started/quickstarts/reactjs)
 
 Instale a biblioteca:
 
@@ -75,7 +76,7 @@ Instale a biblioteca:
 npm i @supabase/supabase-js
 ```
 
-Crie/edite o arquivo `.env` (na raiz do projeto). Exemplo:
+Crie/edite o arquivo `.env` (na raiz do projeto). Em projetos Vite use a convenção `VITE_`:
 
 ```bash
 VITE_SUPABASE_URL=https://SEU_PROJECT_REF.supabase.co
@@ -84,20 +85,18 @@ VITE_SUPABASE_PUBLISHABLE_KEY=sua_chave_publishable
 
 > Segurança: para apps client-side, use a **publishable key**. A **service role key** não deve ser exposta no frontend.
 
-Crie um arquivo de configuração para exportar o cliente (exemplo: `src/supabaseClient.ts`):
+Crie um arquivo de configuração para exportar o cliente (exemplo: `src/config/supabase.js`):
 
-```ts
+```js
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITESUPABASE_URL as string;
-const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
-export const supabase = createClient(supabaseUrl, supabaseKey);
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 ```
 
-> Ajuste as variáveis de ambiente para o padrão do seu bundler (Vite/CRA/Next). O importante é garantir que você está usando as chaves corretas do `.env`. Lembre-se de adicionar um .gitignore que bloqueará o .env de ser comitado.
-
-
+> Ajuste as variáveis de ambiente para o padrão do seu bundler (Vite/CRA/Next). O importante é garantir que você está usando as chaves corretas do `.env`.
 
 ---
 
@@ -115,7 +114,7 @@ Estrutura esperada:
 
 #### `options.data` (metadados)
 
-- `name`: string
+- `nome`: string
 - `cpf`: **string com 11 dígitos**, sem formatação (ex.: `'99999999999'`)
 - `cargo`: string com enum esperado:
   - `'gerente'`
@@ -135,7 +134,7 @@ const { data, error } = await supabase.auth.signUp({
   password,
   options: {
     data: {
-      name,
+      nome,
       cpf, // '99999999999' (11 dígitos, sem máscara)
       cargo // 'gerente' | 'funcionario'
     }
@@ -155,47 +154,28 @@ Fluxo esperado:
 - O gerente já deve estar autenticado.
 - As **Policies/RLS** do backend devem permitir o cadastro/atualização conforme o modelo do sistema.
 
+
 ```ts
-const { data, error } = await supabase.auth.signUp({
-  email: 'funcionario@email.com',
-  password: 'SenhaDoFuncionario123',
-  options: {
-    data: {
-      name: 'Nome do Funcionário',
-      cpf: '12345678901',
-      cargo: 'funcionario',
-      gerente_id: session?.user?.id // Envia o ID do gerente logado na sessão aqui!
-    }
-  }
+
+
+const payload = {
+  email,       // vindo do seu state
+  password,    // vindo do seu state
+  nome,        // vindo do seu state
+  cpf,         // vindo do seu state
+  cargo        // 'funcionario' ou 'gerente'
+};
+
+console.log('Payload enviado para a Edge Function:', payload);
+
+// Invoca a função 'criar-usuario'
+const { data, error } = await supabase.functions.invoke('criar-usuario', {
+  body: payload
 });
 ```
 
 > Se o seu modelo exigir “criar funcionário em tabela” (perfil) separadamente, ajuste para inserir/atualizar uma tabela de perfil em vez de depender somente de `options.data`.
 
-### Diferença para os próximos funcionários (enviar `gerente_id` no metadata)
-
-Para os **próximos funcionários**, além dos campos comuns do `options.data`, envie o identificador do gerente no metadata.
-
-- `gerente_id`: uuid (ou string compatível com o tipo da coluna no seu banco)
-
-Isso permite que o backend (via **trigger/RLS/Policies**) associe o funcionário ao gerente responsável.
-
-Exemplo (signup de funcionário):
-
-```ts
-const { data, error } = await supabase.auth.signUp({
-  email,
-  password,
-  options: {
-    data: {
-      name,
-      cpf,
-      cargo: 'funcionario',
-      gerente_id // id do gerente que está vinculando este funcionário
-    }
-  }
-});
-```
 
 # Listar usuários
 
@@ -213,6 +193,7 @@ return { data, error };
 
 
 ---
+
 
 # Buscar usuário por ID
 
@@ -245,17 +226,14 @@ Permite atualizar:
 * CPF
 * Cargo
 * Status
+* Nome
 
 ## Exemplo
 
 ```ts
 const { data, error } = await supabase
   .from('usuarios')
-  .update({
-    cpf,
-    cargo,
-    status
-  })
+  .update({ nome, cpf, cargo, status })
   .eq('id', id)
   .select()
   .single();
@@ -267,6 +245,7 @@ return { data, error };
 
 | Campo  | Tipo   | Valores               |
 | ------ | ------ | --------------------- |
+| nome   | string | Nome completo         |
 | cpf    | string | CPF válido            |
 | cargo  | string | gerente / funcionario |
 | status | string | ativo / inativo       |
@@ -293,7 +272,6 @@ status = 'ativo'
 
 
 
-
 ## Localizações (CRUD)
 
 Este guia assume uma tabela chamada **`localizacoes`**.
@@ -305,7 +283,7 @@ Campos sugeridos (ajuste ao seu schema):
 - `nome`: string
 - `descricao`: string (opcional)
 - `tipo`: string compatível com ENUM (exemplos abaixo)
-- `status`: string compatível com ENUM (ex.: `'ativo'` | `'inativo'`)
+- `status`: string compatível com ENUM (ex.: `'ativo' | 'inativo'`)
 
 Exemplos sugeridos para `tipo`:
 
@@ -410,12 +388,12 @@ return { data, error };
 
 ### Editar (atualizar campos do usuário)
 
-Campos variam conforme seu schema. Exemplo usando `cpf`, `cargo` e `status`:
+Campos variam conforme seu schema. Exemplo usando `nome`, `cpf`, `cargo` e `status`:
 
 ```ts
 const { data, error } = await supabase
   .from('usuarios')
-  .update({ cpf, cargo, status })
+  .update({ nome, cpf, cargo, status })
   .eq('id', id)
   .select()
   .single();
@@ -568,6 +546,144 @@ const { error } = await supabase
   .from('categorias_produtos')
   .delete()
   .eq('id', id);
+```
+
+---
+
+## Produtos (CRUD)
+
+Este projeto usa uma tabela `produtos` onde a quantidade é calculada a partir das movimentações. Exemplos de queries usadas pelo frontend abaixo.
+
+### Inserir
+
+```js
+// criaProduto(nome, descricao, codigo_de_barras, categoria_id, preco, status)
+const { data, error } = await supabase
+  .from('produtos')
+  .insert([{
+    nome,
+    descricao,
+    codigo_de_barras,
+    categoria_id,
+    preco,
+    status,
+    quantidade: 0
+  }])
+  .select()
+  .single();
+```
+
+### Listar todos
+
+```js
+const { data, error } = await supabase
+  .from('produtos')
+  .select('*');
+```
+
+### Buscar por código de barras
+
+```js
+const { data, error } = await supabase
+  .from('produtos')
+  .select('*')
+  .eq('codigo_de_barras', codigo)
+  .maybeSingle();
+```
+
+### Atualizar
+
+```js
+const { data, error } = await supabase
+  .from('produtos')
+  .update(camposParaAtualizar)
+  .eq('id', id)
+  .select()
+  .single();
+```
+
+### Deletar
+
+```js
+const { error } = await supabase
+  .from('produtos')
+  .delete()
+  .eq('id', id);
+```
+
+---
+
+## Movimentações (Registro e Histórico)
+
+As movimentações devem ser registradas em `movimentacoes` e vinculadas ao usuário na tabela `usuarios_movimentacoes`.
+
+### Registrar movimentação com vínculo do usuário
+
+```js
+const payload = {
+  produto_id,
+  quantidade,
+  tipo, // 'entrada' | 'saida' | 'transferencia'
+  fornecedor_id: fornecedorId || null,
+  localizacao_entrada: localEntrada || null,
+  localizacao_saida: localSaida || null
+};
+
+// No frontend chamamos uma função que faz inserção e cria o vínculo de auditoria
+const { data, error } = await supabase
+  .from('movimentacoes')
+  .insert([payload])
+  .select()
+  .single();
+
+// Em seguida inserir na tabela de vínculo
+await supabase.from('usuarios_movimentacoes').insert([{ movimentacao_id: data.id, usuario_id }]);
+```
+
+### Listar histórico com dados de produto
+
+```js
+const { data, error } = await supabase
+  .from('movimentacoes')
+  .select(`
+    id,
+    quantidade,
+    tipo,
+    data,
+    localizacao_entrada,
+    localizacao_saida,
+    produtos ( id, nome, codigo_de_barras )
+  `)
+  .order('data', { ascending: false });
+```
+
+### Listar funcionários relacionados à movimentação
+
+```js
+const { data, error } = await supabase
+    .from('usuarios_movimentacoes')
+    .select(`
+      id,
+      movimentacao_id,
+      usuarios (
+        id,
+        cpf,
+        cargo,
+        status
+      )
+    `)
+    .eq('movimentacao_id', movimentacaoId);
+```
+
+
+### Deletar movimentação (e vínculo)
+
+```js
+// remover vínculo primeiro (se existir)
+await supabase.from('usuarios_movimentacoes').delete().eq('movimentacao_id', id);
+
+// então remover movimentação
+await supabase.from('movimentacoes').delete().eq('id', id);
 ```
 
 ---

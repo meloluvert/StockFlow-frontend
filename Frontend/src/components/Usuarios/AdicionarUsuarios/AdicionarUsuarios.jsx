@@ -9,30 +9,32 @@ function AdicionarUsuarios({ showModal, setShowModal }){
     const [cpf, setCpf] = useState('');
     const [cargo, setCargo] = useState('funcionario');
 
-    const handleCreateUser = async (e) => {
-    e.preventDefault();
-
-    console.log("executei")
-
-    const { data, error } = await supabase.auth.admin.createUser({
-      email,
-      password,
-      options: {
-        data: {
-          nome,
-          cpf,
-          cargo,
-        },
-      },
-    });
+    const handleCriarUsuarioViaEdge = async (e) => {
+        e.preventDefault();
+        
+        const payload = {
+            email: email,       // vindo do seu state
+            password: password, // vindo do seu state
+            nome: nome,         // vindo do seu state
+            cpf: cpf,           // vindo do seu state
+            cargo: cargo        // vindo do seu state ('funcionario' ou 'gerente')
+        };
 
 
-    if (error) {
-      alert(error.message)
-      return;
-    }
+        try {
+            
+            const { data, error } = await supabase.functions.invoke('criar-usuario', {
+            body: payload
+            });
 
-  };
+            console.log("data:", data);
+            console.log("error:", error);
+
+            
+        } catch (error) {
+            console.error(error.message);
+        }
+    };
     
     const toggleModal = () => {
         setShowModal(prev => !showModal)
@@ -72,7 +74,7 @@ function AdicionarUsuarios({ showModal, setShowModal }){
                     <option value="gerente">gerente</option>
                     </select>
 
-                <button className="btn-adicionar" onClick={(e) => {handleCreateUser(e); toggleModal()}}>Adicionar</button>
+                <button className="btn-adicionar" onClick={(e) => {handleCriarUsuarioViaEdge(e); toggleModal()}}>Adicionar</button>
                 <button className="btn-cancelar" onClick={toggleModal} type="button">Cancelar</button>
 
                 </form>

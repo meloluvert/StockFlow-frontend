@@ -53,6 +53,7 @@ function ListaUsuarios({session}) {
                 return search === '' ? usuario :
                 usuario.cpf.toString().includes(search) ||
                 usuario.cargo.toLowerCase().includes(search) ||
+                usuario.nome.toLowerCase().includes(search) ||
                 usuario.status.toLowerCase().includes(search)
               }).map
               ((usuario) => {

@@ -6,6 +6,7 @@ import PageUsuario from "./pages/PageUsuario/PageUsuario.jsx"
 import PageCategoria from './pages/PageCategoria/PageCategoria.jsx';
 import PageFornecedor from './pages/PageFornecedor/PageFornecedor.jsx';
 import PageLocalizacao from './pages/PageLocalizacao/PageLocalizacao.jsx';
+import PageProdutos from './pages/PageProdutos/PageProdutos.jsx';
 
 import { HashRouter as Router, Routes, Route } from 'react-router-dom'
 import { supabase } from './config/supabase';
@@ -38,6 +39,7 @@ function App() {
         <Route path='/categoria' element={<PageCategoria session={session}/>}/>
         <Route path='/fornecedor' element={<PageFornecedor session={session}/>}></Route>
         <Route path='/localizacao' element={<PageLocalizacao session={session}/>}></Route>
+        <Route path='/produto' element={<PageProdutos session={session}/>}> </Route>
         
       </Routes>
     </Router>

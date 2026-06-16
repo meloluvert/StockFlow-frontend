@@ -22,6 +22,10 @@ function Options() {
         navigate("/localizacao")
     }
 
+    const optClickProduto = () => {
+        navigate("/produto")
+    }
+
 
     return (
         <div className='Options'>
@@ -30,6 +34,7 @@ function Options() {
             <button onClick={optClickCategoria}>Categorias</button>
             <button onClick={optClickFornecedores}>Fornecedores</button>
             <button onClick={optClickLocalizacao}>Localizações</button>
+            <button onClick={optClickProduto}>Produtos</button>
 
         </div>
   )

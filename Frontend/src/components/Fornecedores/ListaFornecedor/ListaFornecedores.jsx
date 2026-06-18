@@ -36,7 +36,7 @@ function ListaFornecedores({session}) {
         <div className='listagem-fornecedores'>
         <h1>Listagem de Fornecedores</h1>
 
-        <button className="btn-adicionar" type="button" onClick={fetchFornecedores}>Carregar categorias</button>
+        <button className="btn-adicionar" type="button" onClick={fetchFornecedores}>Carregar Fornecedores</button>
           
           <input className='input-search' placeholder='Buscar' type={Text} value={search} onChange={(e) => setSearch(e.target.value)}/>
          

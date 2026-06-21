@@ -35,6 +35,8 @@
   - [Atualizar (inclui status)](#atualizar-categorias)
   - [Deletar](#deletar-categorias)
 - [Boas práticas (RLS, Policies e segurança)](#boas-práticas-rls-policies-e-segurança)
+- [Relatórios (Edge Function)](#relatórios)
+- [Outras consultas](#outras-consultas)
 - [Referências](#referências)
 
 ---
@@ -657,25 +659,6 @@ const { data, error } = await supabase
   .order('data', { ascending: false });
 ```
 
-### Listar funcionários relacionados à movimentação
-
-```js
-const { data, error } = await supabase
-    .from('usuarios_movimentacoes')
-    .select(`
-      id,
-      movimentacao_id,
-      usuarios (
-        id,
-        cpf,
-        cargo,
-        status
-      )
-    `)
-    .eq('movimentacao_id', movimentacaoId);
-```
-
-
 ### Deletar movimentação (e vínculo)
 
 ```js
@@ -684,6 +667,106 @@ await supabase.from('usuarios_movimentacoes').delete().eq('movimentacao_id', id)
 
 // então remover movimentação
 await supabase.from('movimentacoes').delete().eq('id', id);
+```
+
+
+---
+
+## Relatórios
+
+O projeto expõe uma Edge Function chamada `gerar-relatorio` que gera relatórios em PDF no backend (ex.: listagens de produtos ou histórico de movimentações). A função responde com o PDF como conteúdo binário, por isso o frontend deve solicitar o conteúdo com o cabeçalho `Accept: application/pdf` e tratar a resposta como um Blob.
+
+Endpoint (invocado via SDK `supabase-js`):
+
+Exemplo de uso no frontend:
+
+```js
+const { data, error } = await supabase.functions.invoke('gerar-relatorio', {
+  body: { tipoRelatorio: 'produtos' }, // 'produtos' | 'movimentacoes'
+  headers: { 'Accept': 'application/pdf' }
+});
+
+if (error) {
+  console.error('Falha ao gerar relatório', error);
+  return;
+}
+
+// data vem como array buffer/binário — crie um Blob para abrir/baixar
+const blob = new Blob([data], { type: 'application/pdf' });
+const url = URL.createObjectURL(blob);
+window.open(url, '_blank');
+setTimeout(() => URL.revokeObjectURL(url), 10000);
+```
+
+Observações:
+- `tipoRelatorio` deve ser uma string: `'produtos'` ou `'movimentacoes'`.
+- A Edge Function é responsável por montar o PDF (por ex.: via biblioteca no servidor) e retornar os bytes.
+- Certifique-se de que a função respeite autenticação/RLS quando necessário — o frontend envia o token automaticamente quando usa o cliente `supabase` configurado.
+ 
+## Outras consultas
+
+Consultas úteis usadas no dashboard do frontend para métricas rápidas e filtros.
+
+- Produtos com estoque baixo (quantidade menor que 10):
+
+```js
+const { data, error } = await supabase
+  .from('produtos')
+  .select('*')
+  .lt('quantidade', 10)
+  .order('quantidade', { ascending: true });
+```
+
+- Total de produtos diferentes cadastrados (apenas count):
+
+```js
+const { count, error } = await supabase
+  .from('produtos')
+  .select('*', { count: 'exact', head: true });
+// head: true faz a query não trazer os dados, apenas o número (economiza banda)
+```
+
+- Entradas registradas hoje:
+
+```js
+const hoje = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+
+const { data, error } = await supabase
+  .from('movimentacoes')
+  .select('*, produtos(nome, codigo_de_barras)')
+  .eq('tipo', 'entrada')
+  .eq('data', hoje);
+```
+
+- Saídas registradas hoje:
+
+```js
+const hoje = new Date().toISOString().split('T')[0];
+
+const { data, error } = await supabase
+  .from('movimentacoes')
+  .select('*, produtos(nome, codigo_de_barras)')
+  .eq('tipo', 'saida')
+  .eq('data', hoje);
+```
+
+- Quantidade total de todos os produtos somados em estoque (view):
+
+```js
+const { data, error } = await supabase
+  .from('vw_quantidade_total_estoque')
+  .select('total_geral')
+  .single(); // retorna { total_geral: X }
+```
+
+- Produtos mais movimentados (Top 5) — view agregada:
+
+```js
+const { data, error } = await supabase
+  .from('vw_produtos_mais_movimentados')
+  .select('*')
+  .order('total_movimentado', { ascending: false })
+  .limit(5);
 ```
 
 ---
@@ -701,8 +784,8 @@ await supabase.from('movimentacoes').delete().eq('id', id);
 4. Não confie em validações apenas no frontend:
    - permissões devem estar no backend (RLS/Policies/Functions).
 5. Se existirem campos como `status`, prefira update (ex.: `ativo`/`inativo`) em vez de delete quando fizer sentido no domínio.
-
 ---
+
 
 ## Referências
 

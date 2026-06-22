@@ -1,0 +1,36 @@
+.PageUsuario {
+    background-color: #E5EDE4;
+}
+
+.PageUsuario-content {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+.funcoes-gerente {
+    width: 600px;
+    background-color: white;
+    border-radius: 1rem;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.funcoes-gerente button{
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    outline: none;
+    border: none;
+    border-radius: 0.75rem;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    background-color: #2C8224;
+}
+
+.funcoes-gerente button:hover{
+    background-color: #58ad50;
+    transition: 0.7s;
+}

@@ -5,6 +5,7 @@ import Navbar from '../../components/Navbar/Navbar';
 import AdicionarProdutos from '../../components/Produtos/AdicionarProdutos/AdicionarProdutos';
 import ListarProdutos from '../../components/Produtos/ListarProdutos/ListarProdutos';
 import EditarProdutos from '../../components/Produtos/EditarProdutos/EditarProdutos';
+import ListarProdutosEmFalta from '../../components/Produtos/ListarProdutosEmFalta/ListarProdutosEmFalta';
 
 import './PageProdutos.css'
 
@@ -31,6 +32,7 @@ function PageProdutos({session}) {
                 </div>
             )}
             <ListarProdutos session = {session}/>
+            <ListarProdutosEmFalta/>
 
             </div>
         </div>
